@@ -2,24 +2,12 @@
 // Created by Fallere141 on 5/17/24.
 //
 
-#ifndef JSON_DECODE_JSON6_H
-#define JSON_DECODE_JSON6_H
+#ifndef JSON_DECODE_MY_JSON_H
+#define JSON_DECODE_MY_JSON_H
 
-#include "json4.h"
-#include "json5.h"
-
-namespace std{
-    template<class _CharT, class _Traits, class _Allocator>
-    class basic_string{
-        operator int(){
-            return 0;
-        }
-        operator double (){
-            return 0;
-        }
-    };
-}
-
+#include "json_parser.h"
+#include "json_container.h"
+#include <cassert>
 
 namespace final {
 
@@ -47,18 +35,23 @@ namespace final {
 
         std::string to_string(){
             return get_Json_str(json_container);
+        };
+
+        template<ctll::fixed_string Name>
+        auto get(){
+            return get_Json<Name>(json_container);
         }
 
-//        template<ctll::fixed_string Name>
-//        auto get_Json(){
-//            return get_Json<Name>(json_container);
-//        }
+        template<ctll::fixed_string Name,typename target_type>
+        auto set(target_type const &val){
+            return set_Json<Name>(json_container, val);
+        }
+
+        template<ctll::fixed_string Name>
+        auto hasKey(){
+            return hasKey<Name>(json_container);
+        }
 
     };
-//    template<ctll::fixed_string Name>
-//    auto get(){
-//        return get_Json<Name>(json_container);
-//    }
-
 }
-#endif //JSON_DECODE_JSON6_H
+#endif //JSON_DECODE_MY_JSON_H

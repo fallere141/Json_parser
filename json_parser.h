@@ -2,8 +2,8 @@
 // Created by Fallere141 on 5/16/24.
 //
 
-#ifndef JSON_DECODE_JSON4_H
-#define JSON_DECODE_JSON4_H
+#ifndef JSON_DECODE_JSON_PARSER_H
+#define JSON_DECODE_JSON_PARSER_H
 
 #include <variant>
 #include <string>
@@ -11,7 +11,7 @@
 #include "ctre.hpp"
 #include <iostream>
 #include <format>
-#include "json5.h"
+#include "json_container.h"
 
 namespace final {
     using jsonType = std::variant<int, double, std::string>;
@@ -22,7 +22,6 @@ namespace final {
 
     private:
         std::string input;
-//        std::map<std::string, jsonType> json_pair;
 
         void parser() {
             std::string subJson;
@@ -138,4 +137,4 @@ namespace final {
         }
     };
 }
-#endif //JSON_DECODE_JSON4_H
+#endif //JSON_DECODE_JSON_PARSER_H

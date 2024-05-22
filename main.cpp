@@ -2,9 +2,9 @@
 #include <map>
 
 #include <type_traits>
-#include "json4.h"
-#include "json5.h"
-#include "json6.h"
+#include "json_parser.h"
+#include "json_container.h"
+#include "my_json.h"
 
 using namespace std;
 using namespace final;
@@ -67,8 +67,8 @@ int main() {
 
     type_pair<"second", double> second(2.3);
 
-    Json_temp<tuple<type_pair<"first", int>, type_pair<"second", double>>> tryJsonTemp{2, 3.5};
-    Json_temp<std::tuple<type_pair<"first", int>, type_pair<"second", double>>> tryJsonTemp2{};
+    Json_container<tuple<type_pair<"first", int>, type_pair<"second", double>>> tryJsonTemp{2, 3.5};
+    Json_container<std::tuple<type_pair<"first", int>, type_pair<"second", double>>> tryJsonTemp2{};
 
     set_Json<"first">(tryJsonTemp2, 10);
     auto i = get_Json<"first">(tryJsonTemp2);
