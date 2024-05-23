@@ -12,6 +12,7 @@
 
 namespace final {
 
+    //https://stackoverflow.com/questions/68443804/c20-concept-to-check-tuple-like-types
     template<typename T>
     struct is_type_pair : std::false_type {};
 
@@ -21,19 +22,16 @@ namespace final {
     template<typename T>
     concept is_type_pair_t = is_type_pair<T>::value;
 
-    template<typename ... Ts>
-    struct are_type_pairs: std::conjunction<is_type_pair<Ts> ...> {};
-
     template<typename T>
     struct json_impl : std::false_type {};
 
-    template<template<typename...> class Tp, is_type_pair_t T>
-    struct json_impl<Tp<T>> {
+    template<is_type_pair_t T>
+    struct json_impl<std::tuple<T>> {
         static constexpr bool value = true;
     };
 
-    template<template<typename...> class Tp, is_type_pair_t T, is_type_pair_t... Ts>
-    struct json_impl<Tp<T, Ts...>>:std::true_type {};
+    template<is_type_pair_t... Ts>
+    struct json_impl<std::tuple<Ts...>>:std::true_type {};
 
     template<class T>
     concept json_type = json_impl<T>::value;
