@@ -8,12 +8,39 @@
 #include "json_parser.h"
 #include "json_container.h"
 #include <cassert>
+#include <concepts>
 
 namespace final {
 
     template<typename T>
+    struct is_type_pair : std::false_type {};
+
+    template<ctll::fixed_string Name, typename T>
+    struct is_type_pair<type_pair<Name,T>> : std::true_type {};
+
+    template<typename T>
+    concept is_type_pair_t = is_type_pair<T>::value;
+
+    template<typename ... Ts>
+    struct are_type_pairs: std::conjunction<is_type_pair<Ts> ...> {};
+
+    template<typename T>
+    struct json_impl : std::false_type {};
+
+    template<template<typename...> class Tp, is_type_pair_t T>
+    struct json_impl<Tp<T>> {
+        static constexpr bool value = true;
+    };
+
+    template<template<typename...> class Tp, is_type_pair_t T, is_type_pair_t... Ts>
+    struct json_impl<Tp<T, Ts...>>:std::true_type {};
+
+    template<class T>
+    concept json_type = json_impl<T>::value;
+
+    template<json_type T>
     struct Json {
-        T json_container;
+        Json_container<T> json_container;
         Json():json_container{} {};
 
         void parser(std::string const &json_str) {
@@ -53,5 +80,9 @@ namespace final {
         }
 
     };
+
+
+
+
 }
 #endif //JSON_DECODE_MY_JSON_H

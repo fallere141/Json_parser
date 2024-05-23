@@ -18,7 +18,8 @@ namespace final {
     public:
         type_pair(T const &t) : val(t) {};
 
-        type_pair() {};
+        type_pair() = default;
+
         T val;
     };
 
@@ -45,25 +46,21 @@ namespace final {
 
     template<typename T, ctll::fixed_string Name>
     struct Json_container<std::tuple<type_pair<Name, T>>> {
-        using type = typename std::tuple<type_pair<Name, T>>;
-
-        using key_tuple = typename std::tuple<key_value<Name>>;
 
         Json_container(T const &t) : val(t) {};
 
         Json_container() : val() {};
+
         type_pair<Name, T> val;
     };
 
-    template<ctll::fixed_string ...Names, ctll::fixed_string Name, typename ... Ts, typename T>
+    template<ctll::fixed_string ... Names, ctll::fixed_string Name, typename ... Ts, typename T>
     struct Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>>
             : public Json_container<std::tuple<type_pair<Names, Ts>...>> {
-        Json_container(T const &t, Ts const &... ts) : Json_container<std::tuple<type_pair<Names, Ts>...>>(ts...), val(t) {};
+        Json_container(T const &t, Ts const &... ts) : Json_container<std::tuple<type_pair<Names, Ts>...>>(ts...),
+                                                       val(t) {};
 
         Json_container() : Json_container<std::tuple<type_pair<Names, Ts>...>>(), val() {};
-
-        using type = typename std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>;
-        using key_tuple = typename std::tuple<key_value<Name>, key_value<Names>...>;
 
         type_pair<Name, T> val;
     };
@@ -162,7 +159,8 @@ namespace final {
     template<typename target_type, typename ... Ts, ctll::fixed_string ... Names, typename T, ctll::fixed_string Name>
     struct Json_str_set<target_type, Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>>> {
         void
-        set_with_str(Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>> &tup, std::string const &forKey,
+        set_with_str(Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>> &tup,
+                     std::string const &forKey,
                      target_type const &val) {
             std::string result(std::basic_string_view<char32_t>(Name).begin(),
                                std::basic_string_view<char32_t>(Name).end());
@@ -185,13 +183,13 @@ namespace final {
             if (result == forKey) {
                 tup.val.val = val;
             }
-            return;
         };
     };
 
     template<typename target_type, typename ... Ts, ctll::fixed_string ... Names>
     void
-    set_str(Json_container<std::tuple<type_pair<Names, Ts>...>> &tup, std::string const &forKey, target_type const &val) {
+    set_str(Json_container<std::tuple<type_pair<Names, Ts>...>> &tup, std::string const &forKey,
+            target_type const &val) {
         Json_str_set<target_type, Json_container<std::tuple<type_pair<Names, Ts>...>>> util;
         util.set_with_str(tup, forKey, val);
     };
@@ -200,9 +198,10 @@ namespace final {
     struct Json_str_set_str;
 
     template<typename ... Ts, ctll::fixed_string ... Names, typename T, ctll::fixed_string Name>
-    struct Json_str_set_str<std::string , Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>>> {
+    struct Json_str_set_str<std::string, Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>>> {
         void
-        set_with_str(Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>> &tup, std::string const &forKey,
+        set_with_str(Json_container<std::tuple<type_pair<Name, T>, type_pair<Names, Ts>...>> &tup,
+                     std::string const &forKey,
                      std::string const &val) {
             Json_str_set_str<std::string, Json_container<std::tuple<type_pair<Names, Ts>...>>> util;
             util.set_with_str(static_cast<Json_container<std::tuple<type_pair<Names, Ts>...>> &> (tup), forKey, val);
@@ -210,9 +209,10 @@ namespace final {
     };
 
     template<typename ... Ts, ctll::fixed_string ... Names, ctll::fixed_string Name>
-    struct Json_str_set_str<std::string , Json_container<std::tuple<type_pair<Name, std::string>, type_pair<Names, Ts>...>>> {
+    struct Json_str_set_str<std::string, Json_container<std::tuple<type_pair<Name, std::string>, type_pair<Names, Ts>...>>> {
         void
-        set_with_str(Json_container<std::tuple<type_pair<Name, std::string>, type_pair<Names, Ts>...>> &tup, std::string const &forKey,
+        set_with_str(Json_container<std::tuple<type_pair<Name, std::string>, type_pair<Names, Ts>...>> &tup,
+                     std::string const &forKey,
                      std::string const &val) {
             std::string result(std::basic_string_view<char32_t>(Name).begin(),
                                std::basic_string_view<char32_t>(Name).end());
@@ -227,15 +227,14 @@ namespace final {
     };
 
     template<typename T, ctll::fixed_string Name>
-    struct Json_str_set_str<std::string,Json_container<std::tuple<type_pair<Name, T>>>> {
+    struct Json_str_set_str<std::string, Json_container<std::tuple<type_pair<Name, T>>>> {
         void set_with_str(Json_container<std::tuple<type_pair<Name, T>>> &tup, std::string const &forKey,
                           std::string const &val) {
-            return;
         };
     };
 
     template<ctll::fixed_string Name>
-    struct Json_str_set_str<std::string,Json_container<std::tuple<type_pair<Name, std::string>>>> {
+    struct Json_str_set_str<std::string, Json_container<std::tuple<type_pair<Name, std::string>>>> {
         void set_with_str(Json_container<std::tuple<type_pair<Name, std::string>>> &tup, std::string const &forKey,
                           std::string const &val) {
             std::string result(std::basic_string_view<char32_t>(Name).begin(),
@@ -243,15 +242,15 @@ namespace final {
             if (result == forKey) {
                 tup.val.val = val;
             }
-            return;
         };
     };
 
 
     template<typename ... Ts, ctll::fixed_string ... Names>
     void
-    set_str_str(Json_container<std::tuple<type_pair<Names, Ts>...>> &tup, std::string const &forKey, std::string const &val) {
-        Json_str_set_str<std::string,Json_container<std::tuple<type_pair<Names, Ts>...>>> util;
+    set_str_str(Json_container<std::tuple<type_pair<Names, Ts>...>> &tup, std::string const &forKey,
+                std::string const &val) {
+        Json_str_set_str<std::string, Json_container<std::tuple<type_pair<Names, Ts>...>>> util;
         util.set_with_str(tup, forKey, val);
     };
 
@@ -270,7 +269,8 @@ namespace final {
             } else {
 
                 Json_str_haskey<Json_container<std::tuple<type_pair<Names, Ts>...>>> util;
-                return util.set_with_str(static_cast<Json_container<std::tuple<type_pair<Names, Ts>...>> &> (tup), forKey);
+                return util.set_with_str(static_cast<Json_container<std::tuple<type_pair<Names, Ts>...>> &> (tup),
+                                         forKey);
             }
         };
     };
@@ -312,12 +312,13 @@ namespace final {
 
     template<typename ... Ts, ctll::fixed_string ... Names, ctll::fixed_string Name>
     struct Json_turn_str<Json_container<std::tuple<type_pair<Name, std::string>, type_pair<Names, Ts>...>>> {
-        std::string get_Json_str(Json_container<std::tuple<type_pair<Name, std::string>, type_pair<Names, Ts>...>> &tup) {
+        std::string
+        get_Json_str(Json_container<std::tuple<type_pair<Name, std::string>, type_pair<Names, Ts>...>> &tup) {
             std::string key(std::basic_string_view<char32_t>(Name).begin(),
                             std::basic_string_view<char32_t>(Name).end());
             Json_turn_str<Json_container<std::tuple<type_pair<Names, Ts>...>>> util;
 
-            return std::format("\"{}\":\"{}\",", key, tup.val.val) +
+            return std::format(R"("{}":"{}",)", key, tup.val.val) +
                    util.get_Json_str(static_cast<Json_container<std::tuple<type_pair<Names, Ts>...>> &> (tup));
         };
     };
@@ -338,7 +339,7 @@ namespace final {
         std::string get_Json_str(Json_container<std::tuple<type_pair<Name, std::string>>> &tup) {
             std::string key(std::basic_string_view<char32_t>(Name).begin(),
                             std::basic_string_view<char32_t>(Name).end());
-            return std::format("\"{}\":\"{}\",", key, tup.val.val);
+            return std::format(R"("{}":"{}",)", key, tup.val.val);
         };
     };
 
