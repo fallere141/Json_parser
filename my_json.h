@@ -78,11 +78,6 @@ namespace final {
         auto hasKey(){
             return hasKey<Name>(json_container);
         }
-
     };
-
-
-
-
 }
 #endif //JSON_DECODE_MY_JSON_H
