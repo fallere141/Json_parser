@@ -17,13 +17,11 @@ int main() {
     std::cout << json_try.to_string() << std::endl;
 
     Json<std::tuple<type_pair<"first", std::string>, type_pair<"second", int>, type_pair<"third", int>>> json_try2{};
-    json_try2.parser(R"({"first":"hello","second":5,"third":4})");
+    json_try2.parser(R"({"first":"test","second":0,"third":3})");
     std::cout << json_try2.to_string() << std::endl;
 
     static constexpr ctll::fixed_string first = "first";
     json_try2.set<first>("hello2");
     std::cout << json_try2.get<"first">().val;
-
-    static_assert(are_type_pairs<type_pair<"hello",int>,type_pair<"2",float>>::value);
 
 }

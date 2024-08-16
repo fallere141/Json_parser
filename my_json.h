@@ -39,6 +39,7 @@ namespace final {
     template<json_type T>
     struct Json {
         Json_container<T> json_container;
+
         Json():json_container{} {};
 
         void parser(std::string const &json_str) {
